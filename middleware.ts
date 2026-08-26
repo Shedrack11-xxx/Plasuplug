@@ -1,0 +1,33 @@
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+
+// Page-level route protection. This is a UX layer only — it stops an
+// unverified seller or non-admin from ever *loading* the dashboard pages,
+// but the real enforcement (that an unverified seller cannot create a
+// product even via a direct API call) lives server-side in lib/authz.ts
+// and is checked again inside every relevant API route.
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const path = req.nextUrl.pathname;
+
+    if (path.startsWith("/admin") && token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (path.startsWith("/seller/dashboard") && token?.role !== "SELLER") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+  }
+);
+
+export const config = {
+  matcher: ["/admin/:path*", "/seller/:path*"],
+};
