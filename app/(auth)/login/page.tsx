@@ -1,1 +1,1 @@
- import { Suspense } from "react"; import { LoginForm } from "./login-form"; export default function LoginPage() { return ( <Suspense fallback={<div className="max-w-md mx-auto px-4 py-16 text-gray-400 dark:text-gray-500">Loading...</div>}> <LoginForm /> </Suspense> ); }
+import { Suspense } from "react"; import { LoginForm } from "./form"; export default function LoginPage() { return ( <Suspense fallback={<div className="max-w-md mx-auto px-4 py-16 text-gray-400 dark:text-gray-500">Loading...</div>}> <LoginForm /> </Suspense> ); }
